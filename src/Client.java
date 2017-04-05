@@ -13,8 +13,8 @@ public class Client {
     final String endstring = "/.";
     static char[][] tab;
     static char[] letters;
-    Display disp;
-    Inputh inputh;
+    Display display;
+	Inputh inputh;
     
     static OutputStream output = null;
     
@@ -22,13 +22,13 @@ public class Client {
     	this.setName(name);
     	tab = new char[height][width];
     	letters = new char[nbLetter];
-    	disp = new Display(this, width, height, nbLetter);
+    	display = new Display(this, width, height, nbLetter);
     	inputh = new Inputh(socket);
     }
     
     public Client(String name, int h, int w, int nbl, Display disp, Inputh inputh) {
     	this.setName(name);
-    	this.disp = disp;
+    	this.display = disp;
     	this.inputh = inputh;
     	tab = new char[h][w];
     	letters = new char[nbl];
@@ -85,6 +85,24 @@ public class Client {
 				inputh.release();
 				System.out.println(str);
 				break;
+				
+			case("RECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				break;
+			case("PRECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				str = inputh.get();
+				display.printmsg(">> Vous chuchote "+str+"\n");
+				break;
+			case("DECONNEXION/.") :
+				str = inputh.get();
+				display.printmsg(">> Deconnection de "+str+"\n");
+				break;
+			default:
+				System.out.println(">> Unknown command "+str);
+				break;
 			}
 		}
 	}
@@ -122,6 +140,65 @@ public class Client {
 				str = inputh.get();
 				inputh.release();
 				System.out.println(str);
+				break;
+				
+			case("RECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				break;
+			case("PRECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				str = inputh.get();
+				display.printmsg(">> Vous chuchote "+str+"\n");
+				break;
+			case("DECONNEXION/.") :
+				str = inputh.get();
+				display.printmsg(">> Deconnection de "+str+"\n");
+				break;
+			default:
+				System.out.println(">> Unknown command "+str);
+				break;
+			}
+		}
+	}
+	
+	public void result() {
+		boolean end = false;
+
+		String str = "";
+
+		while(!end) {
+
+			inputh.take();
+			str = inputh.get();
+			inputh.release();
+			switch(str) {
+			case("RECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				break;
+			case("PRECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				str = inputh.get();
+				display.printmsg(">> Vous chuchote "+str+"\n");
+				break;
+			case("DECONNEXION/.") :
+				str = inputh.get();
+				display.printmsg(">> Deconnection de "+str+"\n");
+				break;
+			case("BILAN/.") :
+				str = inputh.get();
+				display.printmsg(">> Meilleur mot "+str+"\n");
+				str = inputh.get();
+				display.printmsg(">> Vainqueur "+str+"\n");
+				str = inputh.get();
+				display.printmsg(">> Scores "+str+"\n");
+				end = true;
+				break;
+			default:
+				System.out.println(">> Unknown command "+str);
 				break;
 			}
 		}
@@ -172,6 +249,7 @@ public class Client {
 			submit();
 			//VAINQUEUR/bilan/
 			//(S -> C) Fin de la session courante, scores finaux de la session.
+			result();
 		}
 	}
 	
@@ -220,9 +298,26 @@ public class Client {
 //			(S -> C) Signalement de la connexion de ’user’ aux autres clients.
 			case("CONNECTE/.") :
 				str = inputh.get();
-				//TODO Display name
+				display.printmsg("Connection de "+str+"\n");
+				break;
+			case("SESSION/.") :
+				b = true;
+				break;
+			case("RECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				break;
+			case("PRECEPTION/.") :
+				str = inputh.get();
+				display.printmsg(str);
+				str = inputh.get();
+				display.printmsg(">> Vous chuchote "+str+"\n");
+				break;
+			default:
+				System.out.println(">> Unknown command "+str);
 				break;
 			}
+			
 			inputh.release();
 		}
 		return true;
@@ -319,5 +414,9 @@ public class Client {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+	
+	public Display getDisplay() {
+		return display;
 	}
 }

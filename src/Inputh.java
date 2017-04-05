@@ -9,15 +9,15 @@ import java.util.concurrent.locks.ReentrantLock;
 
 
 public class Inputh implements Runnable{
-	static ArrayList<String> pile;
-	static InputStream input = null;
-	InputStreamReader isr;
-	BufferedReader br;
-	Socket socket;
-	Lock lock;
+	private ArrayList<String> pile;
+	private InputStream input = null;
+	private InputStreamReader isr;
+	private BufferedReader br;
+	private Socket socket;
+	private Lock lock;
 	
 	public Inputh(Socket socket) {
-		this.socket = socket;
+		this.setSocket(socket);
 		isr = new InputStreamReader(input);
 		br = new BufferedReader(isr);
 		lock = new ReentrantLock();
@@ -170,7 +170,7 @@ public class Inputh implements Runnable{
 		lock.unlock();
 	}
 	
-	public static void add(String str) {
+	public void add(String str) {
 		pile.add(str);
 	}
 	
@@ -180,5 +180,13 @@ public class Inputh implements Runnable{
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public Socket getSocket() {
+		return socket;
+	}
+
+	public void setSocket(Socket socket) {
+		this.socket = socket;
 	}
 }
