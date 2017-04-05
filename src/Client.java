@@ -13,7 +13,7 @@ public class Client {
     static char[][] tab;
     static char[] letters;
     Display disp;
-    static Inputh inputh;
+    Inputh inputh;
     
     static OutputStream output = null;
     
@@ -24,44 +24,16 @@ public class Client {
     	inputh = new Inputh(socket);
     }
     
-    
-    public static void main(int argc, String[] args) {
-   
-        try {
-        	if (argc == 0) {
-        		throw new RuntimeException("need at least the adresse");
-        	}
-        	
-        	String adresse = args[0];
-            port   = 2017;
-            if (argc == 2) {
-            	port = Integer.parseInt(args[1]);
-            }
-            socket = new Socket(adresse, port);
-
-            // Open stream
-            
-            output = socket.getOutputStream();
-            Client clt = new Client();
-            
-            
-            startSession(clt);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                
-                socket.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+    public Client(int h, int w, int nbl, Display disp, Inputh inputh) {
+    	this.disp = disp;
+    	this.inputh = inputh;
+    	tab = new char[h][w];
+    	letters = new char[nbl];
     }
-
-
+    
+    
 	//Search if he can create a word with each line in all direction
-	private static void recherche() {
+	private void recherche() {
 		boolean end = false;
 		
 		String str = "";
@@ -124,7 +96,7 @@ public class Client {
 	}
 	
 	//Search if he can create a word with each line in all direction
-	private static void submit() {
+	private void submit() {
 		boolean end = false;
 		
 		String str = "";
@@ -196,7 +168,7 @@ public class Client {
 	
 
 	//Recover the table for the research
-	private static void startSession(Client client) {
+	private void startSession() {
 		boolean end = false;
 		//Execution loop
 		while(!end) {
@@ -226,4 +198,36 @@ public class Client {
 			e.printStackTrace();
 		}
 	}
+	
+	
+	public static void main(String[] args) {
+    	   
+        try {
+        	if (args.length == 0) {
+        		throw new RuntimeException("need at least the adresse");
+        	}
+        	
+        	String adresse = args[0];
+            port = 2017;
+            if (args.length == 2) {
+            	port = Integer.parseInt(args[1]);
+            }
+            socket = new Socket(adresse, port);
+
+            // Open stream
+            output = socket.getOutputStream();
+            Client clt = new Client();
+            
+            clt.startSession();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                socket.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 }

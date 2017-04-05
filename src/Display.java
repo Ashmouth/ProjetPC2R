@@ -1,24 +1,33 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.swing.BorderFactory;
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JPanel;
+import javax.swing.JSeparator;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Display extends JFrame{
+public class Display extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	
 	// Board width/height in pixels
-	public static final Color OPEN_CELL_BGCOLOR = Color.YELLOW;
-	public static final Color OPEN_CELL_TEXT_YES = new Color(0, 255, 0);  // RGB
+	public static final Color OPEN_CELL_BGCOLOR = Color.PINK;
+	public static final Color OPEN_CELL_TEXT_YES = new Color(253, 108, 158);  // RGB
 	public static final Color OPEN_CELL_TEXT_NO = Color.RED;
-	public static final Color CLOSED_CELL_BGCOLOR = new Color(240, 240, 240); // RGB
+	public static final Color CLOSED_CELL_BGCOLOR = new Color(255, 0, 255); // RGB
 	public static final Color CLOSED_CELL_TEXT = Color.BLACK;
 	public static final Font FONT_NUMBERS = new Font("Monospaced", Font.BOLD, 20);
 	// Name-constants for UI control (sizes, colors and fonts)
@@ -29,22 +38,28 @@ public class Display extends JFrame{
 	Client client;
 	private JTextField[][] tfCells;
 	private JTextField[] tfGive;
-	JButton buttonx = new JButton("XXX");
-    JButton buttons = new JButton("Soumission");
-    JButton buttond = new JButton("Deconnexion");
+	private JTextField messageBox;
+	private JButton sendMessage;
+	private JTextArea chatBox;
+	JButton buttonx;
+    JButton buttons;
+    JButton buttond;
 	
-	public Display(Client client, int size, int nbletter){
+	
+	public Display(Client client, int size, int nbletter) {
 		new Display(client, size, size, nbletter);
 	}
 	
-	public Display(Client client, int x, int y, int nbletter){
+	public Display(Client client, int x, int y, int nbletter) {
 		this.x = x;
 		this.y = y;
 		this.client = client;
 		this.nbletter = nbletter;
 		
-		CANVAS_WIDTH  = CELL_SIZE * x;
-		CANVAS_HEIGHT = CELL_SIZE * y;
+		//CANVAS_WIDTH  = CELL_SIZE * x;
+		//CANVAS_HEIGHT = CELL_SIZE * y;
+		CANVAS_WIDTH  = 640;
+		CANVAS_HEIGHT = 480;
 		tfCells = new JTextField[x][y];
 		tfGive = new JTextField[nbletter];
 	    
@@ -53,25 +68,47 @@ public class Display extends JFrame{
 		this.setSize(x, y);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//TODO Deconnect
 		this.setLocationRelativeTo(null);
-	    this.setContentPane(buttons);
-	    this.setContentPane(buttond);
+	    this.setVisible(true);
+	    
+	    buttonx = new JButton("XXX");
+	    buttons = new JButton("Soumission");
+	    buttond = new JButton("Deconnexion");
 	    buttons.addActionListener(new SubmitListener()); 
 	    buttons.setEnabled(false);
 	    buttond.addActionListener(new DeconnexionListener());
 	    buttond.setEnabled(false);
-	    this.setVisible(true);
+	}
+	
+	public void initChat() {
+		JPanel panelChat = new JPanel();
+		panelChat.setBackground(Color.BLUE);
+		panelChat.setLayout(new GridBagLayout());
+
+        messageBox = new JTextField(30);
+        messageBox.requestFocusInWindow();
+
+        sendMessage = new JButton("Send Message");
+        //sendMessage.addActionListener(new sendMessageButtonListener());
+
+        chatBox = new JTextArea();
+        chatBox.setEditable(false);
+        chatBox.setFont(new Font("Serif", Font.PLAIN, 15));
+        chatBox.setLineWrap(true);
+        
+        this.add(panelChat, BorderLayout.LINE_END);
 	}
 	
 	public void printtab(char tab[][]) {
 		
-		Container cp = getContentPane();
-		cp.setLayout(new GridLayout(x, y));
+		JPanel panelTab = new JPanel();
+		panelTab.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 4));
+		panelTab.setLayout(new GridLayout(x, y));
 
 		for (int row = 0; row < x; row++) {
 			for (int col = 0; col < y; col++) {
 				tfCells[row][col] = new JTextField();
-				cp.add(tfCells[row][col]);
-				if (tab[row][col] != ' ') {
+				panelTab.add(tfCells[row][col]);
+				if (tab[row][col] == '0') {
 					tfCells[row][col].setText("");
 					tfCells[row][col].setEditable(true);
 					tfCells[row][col].setBackground(OPEN_CELL_BGCOLOR);
@@ -88,28 +125,44 @@ public class Display extends JFrame{
 		}
 		// Set the size of the content-pane and pack all the components
 		//  under this container.
-		cp.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+		panelTab.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+		
+		this.add(panelTab, BorderLayout.LINE_START);
 		pack();
 	}
 	
 	public void printLetter(char tab[]) {
-		Container cp = getContentPane();
-		cp.setLayout(new GridLayout(7, 1));
+		
+		JPanel panelTab = new JPanel();
+		panelTab.setBorder(BorderFactory.createLineBorder(Color.MAGENTA, 4));
+		panelTab.setLayout(new GridLayout(1, nbletter));
 
 		for (int i = 0; i < nbletter; i++) {
 			tfGive[i] = new JTextField();
-				cp.add(tfGive[i]);
-				tfGive[i].setText(tab[i] + "");
-				tfGive[i].setEditable(false);
-				tfGive[i].setBackground(CLOSED_CELL_BGCOLOR);
-				tfGive[i].setForeground(CLOSED_CELL_TEXT);
-				// Beautify all the cells
-				tfGive[i].setHorizontalAlignment(JTextField.CENTER);
-				tfGive[i].setFont(FONT_NUMBERS);
+			panelTab.add(tfGive[i]);
+			tfGive[i].setText(tab[i] + "");
+			tfGive[i].setEditable(false);
+			tfGive[i].setBackground(CLOSED_CELL_BGCOLOR);
+			tfGive[i].setForeground(CLOSED_CELL_TEXT);
+			// Beautify all the cells
+			tfGive[i].setHorizontalAlignment(JTextField.CENTER);
+			tfGive[i].setFont(FONT_NUMBERS);
 		}
 		// Set the size of the content-pane and pack all the components
 		//  under this container.
-		cp.setPreferredSize(new Dimension(CANVAS_WIDTH, CANVAS_HEIGHT));
+		panelTab.setPreferredSize(new Dimension(nbletter*CELL_SIZE, CELL_SIZE));
+		
+		this.add(panelTab, BorderLayout.NORTH);
+		pack();
+	}
+	
+	public void printbutton() {
+		JPanel panelTab = new JPanel();
+		panelTab.setLayout(new GridLayout(1, nbletter));
+		panelTab.add(buttonx);
+		panelTab.add(buttons);
+		panelTab.add(buttond);
+		this.add(panelTab, BorderLayout.SOUTH);
 		pack();
 	}
 
@@ -123,6 +176,10 @@ public class Display extends JFrame{
 			}
 		}
 		return tab;
+	}
+	
+	public void setClient(Client client) {
+		this.client = client;
 	}
 
 	class SubmitListener implements ActionListener{
@@ -142,4 +199,22 @@ public class Display extends JFrame{
 			buttond.setEnabled(false);
 		}
 	}     
+	
+	//For testing Display
+	public static void main(String[] args) {
+		Display disp = new Display(null, 7, 7, 7);
+		char tab[][] = {{'0', '0', 'T', '0', '0', '0', '0'},
+				{'0', '0', 'I', '0', '0', '0', '0'},
+				{'0', '0', 'M', '0', '0', '0', '0'},
+				{'0', '0', 'E', '0', '0', '0', '0'},
+				{'0', '0', '0', '0', '0', '0', '0'},
+				{'0', '0', '0', '0', '0', '0', '0'},
+				{'0', '0', '0', '0', '0', '0', '0'},
+				};
+		char letters[] = {'A', 'T', 'I', 'R', 'M', 'E', 'P'};
+		disp.printLetter(letters);
+		disp.printtab(tab);
+		disp.printbutton();
+		disp.initChat();
+	}
 }
