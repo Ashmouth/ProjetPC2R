@@ -15,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JSeparator;
 import javax.swing.JTextArea;
@@ -104,6 +105,7 @@ public class Display extends JFrame {
         c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
+		
         panelChat.add(chatBox, c);
         c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
@@ -241,8 +243,8 @@ public class Display extends JFrame {
 		public void actionPerformed(ActionEvent arg0) {
 //			buttons.setEnabled(true);
 			String msg = messageBox.getText();
-			//String user = client.getName();
-			String user = "Marco";
+			String user = client.getName();
+			//String user = "Marco";
 			String str = user+" - "+msg+"\n";
 			chatBox.append(str);
 			messageBox.setText("");

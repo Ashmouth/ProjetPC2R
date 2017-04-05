@@ -53,22 +53,13 @@ public class Client {
 				//plateau
 				inputh.take();
 				str = inputh.get();
-				inputh.release();
-				String[] strtab = str.split(",");
-				int index = 0;
-				for(int i = 0; i < height; i++) {
-					for(int j = 0; j < width; j++) {
-						tab[i][j] = strtab[index].charAt(0);
-					}
-				}
+				plateau(str);
 				
 				//tirage
 				str = inputh.get();
+				tirage(str);
+				
 				inputh.release();
-				strtab = str.split(",");
-				for(int i = 0; i < nbLetter; i++) {
-					letters[i] = strtab[i].charAt(0);
-				}
 				
 				break;
 
@@ -173,6 +164,7 @@ public class Client {
 	//Recover the table for the research
 	private void startSession() {
 		boolean end = false;
+		
 		//Execution loop
 		while(!end) {
 			//(S -> C) Debut d’une session.
@@ -181,6 +173,59 @@ public class Client {
 			//VAINQUEUR/bilan/
 			//(S -> C) Fin de la session courante, scores finaux de la session.
 		}
+	}
+	
+	public boolean connection() {
+		boolean b = false;
+//		CONNEXION/user/
+//		(C -> S) Nouvelle connexion d’un client nomme ’user’
+		String message = "CONNEXION/.";
+		try {
+			output.write(message.getBytes());
+			message = name;
+			output.write(message.getBytes());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		String str = "";
+		
+		while(!b) {
+
+			inputh.take();
+			str = inputh.get();
+			
+			switch(str) {
+//			BIENVENUE/placement/tirage/scores/phase/temps/
+//			(S -> C) Validation d’une connexion. Envoi du plateau courant, tirage courant et scores.
+			case("BIENVENUE/.") :
+				str = inputh.get();
+				plateau(str);
+				str = inputh.get();
+				tirage(str);
+				str = inputh.get();
+				score(str);
+				str = inputh.get();
+				phase(str);
+				str = inputh.get();
+				temps(str);
+				break;
+//			Precision de la phase courante et du temps restant pour cette phase.
+//			REFUS/
+//			(S -> C) Refus de la connexion (par exemple parce qu’un client avec le meme nom est deja connecte).
+			case("REFUS/.") :
+				inputh.release();
+				return false;
+//			CONNECTE/user/
+//			(S -> C) Signalement de la connexion de ’user’ aux autres clients.
+			case("CONNECTE/.") :
+				str = inputh.get();
+				//TODO Display name
+				break;
+			}
+			inputh.release();
+		}
+		return true;
 	}
 
 	//Leave the room with a message
@@ -219,8 +264,13 @@ public class Client {
 
             // Open stream
             output = socket.getOutputStream();
-            Client clt = new Client("Marco");
-            
+            Client clt = null;
+            if(args.length == 3) {
+            	clt = new Client(args[2]);
+            } else {
+                clt = new Client("Joe Black");
+            }
+            clt.connection();
             clt.startSession();
         }
         catch (IOException e) {
@@ -233,6 +283,35 @@ public class Client {
             }
         }
     }
+	
+	public void tirage(String str) {
+		String[] strtab = str.split(",");
+		for(int i = 0; i < nbLetter; i++) {
+			letters[i] = strtab[i].charAt(0);
+		}
+	}
+	
+	public void plateau(String str){
+		String[] strtab = str.split(",");
+		int index = 0;
+		for(int i = 0; i < height; i++) {
+			for(int j = 0; j < width; j++) {
+				tab[i][j] = strtab[index].charAt(0);
+			}
+		}
+	}
+	
+	public void score(String str) {
+
+	}
+	
+	public void phase(String str) {
+
+	}
+	
+	public void temps(String str) {
+
+	}
 
 	public String getName() {
 		return name;
