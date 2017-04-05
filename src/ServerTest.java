@@ -54,15 +54,22 @@ public class ServerTest {
 				output.write(message.getBytes());
 				
 				//scores
+				message = "n*user1*score1*user2*score2";
+				output.write(message.getBytes());
 				//phase
+				message = "DEB";
+				output.write(message.getBytes());
 				//temps
+				message = "0";
+				output.write(message.getBytes());
 				/*
-				REFUS/
-				(S -> C) Refus de la connexion (par exemple parce qu’un client avec le meme nom est deja connecte).
-
 				CONNECTE/user/
 				(S -> C) Signalement de la connexion de ’user’ aux autres clients.
                  */
+				message = "CONNECTE/.";
+				output.write(message.getBytes());
+				message = "MARCO";
+				output.write(message.getBytes());
 				
 				
                 
