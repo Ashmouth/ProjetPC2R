@@ -9,6 +9,7 @@ public class Client {
     private static int height = 15;
     private static int width = 15;
     private static int nbLetter = 7;
+    private String name;
     final String endstring = "/.";
     static char[][] tab;
     static char[] letters;
@@ -17,14 +18,16 @@ public class Client {
     
     static OutputStream output = null;
     
-    public Client() {
+    public Client(String name) {
+    	this.setName(name);
     	tab = new char[height][width];
     	letters = new char[nbLetter];
     	disp = new Display(this, width, height, nbLetter);
     	inputh = new Inputh(socket);
     }
     
-    public Client(int h, int w, int nbl, Display disp, Inputh inputh) {
+    public Client(String name, int h, int w, int nbl, Display disp, Inputh inputh) {
+    	this.setName(name);
     	this.disp = disp;
     	this.inputh = inputh;
     	tab = new char[h][w];
@@ -216,7 +219,7 @@ public class Client {
 
             // Open stream
             output = socket.getOutputStream();
-            Client clt = new Client();
+            Client clt = new Client("Marco");
             
             clt.startSession();
         }
@@ -230,4 +233,12 @@ public class Client {
             }
         }
     }
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 }
