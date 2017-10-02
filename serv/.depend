@@ -1,0 +1,19 @@
+dict.cmi :
+plateau.cmi : dict.cmi
+reservoir.cmi :
+rwl.cmi :
+server.cmi :
+dict.cmo : dict.cmi
+dict.cmx : dict.cmi
+plateau.cmo : settings.cmo dict.cmi plateau.cmi
+plateau.cmx : settings.cmx dict.cmx plateau.cmi
+reservoir.cmo : reservoir.cmi
+reservoir.cmx : reservoir.cmi
+rwl.cmo : rwl.cmi
+rwl.cmx : rwl.cmi
+server.cmo : settings.cmo rwl.cmi reservoir.cmi plateau.cmi dict.cmi \
+    server.cmi
+server.cmx : settings.cmx rwl.cmx reservoir.cmx plateau.cmx dict.cmx \
+    server.cmi
+settings.cmo :
+settings.cmx :

@@ -1,0 +1,11 @@
+*.cmo
+*.cma
+*.cmx
+*.cmi
+*.o
+._d
+
+*.opt
+*.exe
+
+*.class

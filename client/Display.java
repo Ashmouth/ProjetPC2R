@@ -1,26 +1,23 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
-import java.awt.Panel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JSeparator;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-import javax.swing.SwingUtilities;
+import javax.swing.ScrollPaneConstants;
+import javax.swing.border.EtchedBorder;
+import javax.swing.border.TitledBorder;
 
 public class Display extends JFrame {
 
@@ -42,12 +39,15 @@ public class Display extends JFrame {
 	private JTextField[][] tfCells;
 	private JTextField[] tfGive;
 	private JTextField messageBox;
+	private JTextField phaseBox;
+	private JTextField timesBox;
 	private JButton sendMessage;
 	private JTextArea chatBox;
+	private JTextArea scoreBox;
 	JPanel panelbutton;
 	JPanel panelLetter;
+	JPanel panelOption;
 	JPanel panelTab;
-	JButton buttonx;
     JButton buttons;
     JButton buttond;
 	
@@ -62,9 +62,7 @@ public class Display extends JFrame {
 		this.client = client;
 		this.nbletter = nbletter;
 		
-		//CANVAS_WIDTH  = CELL_SIZE * x;
-		//CANVAS_HEIGHT = CELL_SIZE * y;
-		CANVAS_WIDTH  = 640;
+		CANVAS_WIDTH  = 960;
 		CANVAS_HEIGHT = 480;
 		tfCells = new JTextField[x][y];
 		tfGive = new JTextField[nbletter];
@@ -72,41 +70,41 @@ public class Display extends JFrame {
 		this.setTitle("Scrabble");
 		this.setBackground(Color.PINK);
 		this.setSize(x, y);
-		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	//TODO Deconnect
+		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 	    this.setVisible(true);
 	    
-	    buttonx = new JButton("XXX");
 	    buttons = new JButton("Soumission");
 	    buttond = new JButton("Deconnexion");
 	    buttons.addActionListener(new SubmitListener()); 
-	    buttons.setEnabled(false);
 	    buttond.addActionListener(new DeconnexionListener());
-	    buttond.setEnabled(false);
 	}
 	
 	public void initChat() {
 		JPanel panelChat = new JPanel();
+		panelChat.setBorder(new TitledBorder(new EtchedBorder(), "Chat"));
 		panelChat.setBackground(new Color(249, 66, 158));
 		panelChat.setLayout(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints();
 
-		chatBox = new JTextArea(20, 20);
+		chatBox = new JTextArea(25, 20);
         chatBox.setEditable(false);
         chatBox.setFont(new Font("Serif", Font.PLAIN, 15));
         chatBox.setLineWrap(true);
         
-        messageBox = new JTextField(20);
-        //messageBox.requestFocusInWindow();
+        JScrollPane scroll = new JScrollPane(chatBox);
+        scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        sendMessage = new JButton("Send Message");
+        messageBox = new JTextField(20);
+
+        sendMessage = new JButton("Envoyer");
         sendMessage.addActionListener(new sendMessageButtonListener());
         
         c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 0;
 		
-        panelChat.add(chatBox, c);
+        panelChat.add(scroll);
         c.fill = GridBagConstraints.HORIZONTAL;
 		c.gridx = 0;
 		c.gridy = 1;
@@ -118,6 +116,45 @@ public class Display extends JFrame {
         
         panelTab.setPreferredSize(new Dimension(10, 20));
         this.add(panelChat, BorderLayout.EAST);
+        pack();
+	}
+	
+	public void printOption() {
+		panelOption = new JPanel();
+		panelOption.setBorder(new TitledBorder(new EtchedBorder(), "ScoreBoard"));
+		panelOption.setBackground(new Color(249, 66, 158));
+		panelOption.setLayout(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints();
+
+		scoreBox = new JTextArea(20, 20);
+		scoreBox.setEditable(false);
+		scoreBox.setFont(new Font("Serif", Font.PLAIN, 15));
+		scoreBox.setLineWrap(true);
+		
+		phaseBox = new JTextField(20);
+		phaseBox.setEditable(false);
+		phaseBox.setFont(new Font("Serif", Font.PLAIN, 15));
+		
+		timesBox = new JTextField(20);
+		timesBox.setEditable(false);
+		timesBox.setFont(new Font("Serif", Font.PLAIN, 15));
+        
+        c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		
+		panelOption.add(scoreBox, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 1;
+		panelOption.add(phaseBox, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 2;
+		panelOption.add(timesBox, c);
+        
+        panelTab.setPreferredSize(new Dimension(10, 20));
+		this.add(panelOption, BorderLayout.WEST);
         pack();
 	}
 	
@@ -182,9 +219,8 @@ public class Display extends JFrame {
 	public void printbutton() {
 		panelbutton = new JPanel();
 		panelbutton.setLayout(new GridLayout(1, nbletter));
-		panelbutton.add(buttonx);
-		panelbutton.add(buttons);
 		panelbutton.add(buttond);
+		panelbutton.add(buttons);
 		this.add(panelbutton, BorderLayout.SOUTH);
 		pack();
 	}
@@ -195,7 +231,11 @@ public class Display extends JFrame {
 		for (int row = 0; row < x; row++) {
 			for (int col = 0; col < y; col++) {
 				tmp = tfCells[row][col].getText();
-				tab[row][col] = tmp.charAt(0);
+				if(tmp.equals("")) {
+					tab[row][col] = '0';
+				} else {
+					tab[row][col] = tmp.charAt(0);
+				}
 			}
 		}
 		return tab;
@@ -207,14 +247,38 @@ public class Display extends JFrame {
 	}
 	
 	public void refresh(char tab[][], char letters[]) {
+		System.out.println(">> Debug Cleanning");
 		this.clean();
+		System.out.println(">> Debug refresh Letters");
 		this.printLetter(letters);
+		System.out.println(">> Debug refresh Tab");
 		this.printtab(tab);
-		SwingUtilities.updateComponentTreeUI(this);
+		System.out.println(">> Debug Update");
+	}
+	
+	public void refreshOption(String scores, String phase, String temps) {
+		refreshScores(scores);
+		refreshPhase(phase);
+		String msg = "Temps : "+temps+"\n";
+		timesBox.setText(msg);
+	}
+	
+	public void refreshPhase(String phase) {
+		String msg = "Phase de Jeu : "+phase+"\n";
+		phaseBox.setText(msg);
+	}
+	
+	public void refreshScores(String scores) {
+		String tmp[] = scores.split("\\*");
+		String msg = "Scores : \n";
+		for(int i = 1; i < Integer.parseInt(tmp[0])+1; i++) {
+			msg += (tmp[i] + " : " + tmp[i+1] + "\n");
+		}
+		scoreBox.setText(msg);
 	}
 	
 	public void printmsg(String str) {
-		chatBox.append(str);
+		chatBox.append(str+"\n");
 	}
 	
 	public void setClient(Client client) {
@@ -223,17 +287,15 @@ public class Display extends JFrame {
 
 	class SubmitListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			buttons.setEnabled(true);
-			client.submitTab(recover());
-			//client.submitAnswer();
 			buttons.setEnabled(false);
+			client.submitTab(recover());
+			buttons.setEnabled(true);
 		}
 	}
 
 
 	class DeconnexionListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-			buttons.setEnabled(true);
 			client.deconnexion();
 			buttond.setEnabled(false);
 		}
@@ -241,43 +303,9 @@ public class Display extends JFrame {
 	
 	class sendMessageButtonListener implements ActionListener{
 		public void actionPerformed(ActionEvent arg0) {
-//			buttons.setEnabled(true);
 			String msg = messageBox.getText();
-			String user = client.getName();
-			//String user = "Marco";
-			String str = user+" - "+msg+"\n";
-			chatBox.append(str);
+			client.sendmsg(msg);
 			messageBox.setText("");
-//			buttond.setEnabled(false);
 		}
-	}
-	
-	//For testing Display
-	public static void main(String[] args) {
-		Display disp = new Display(null, 7, 7, 7);
-		char tab[][] = {{'0', '0', 'T', '0', '0', '0', '0'},
-				{'0', '0', 'I', '0', '0', '0', '0'},
-				{'0', '0', 'M', '0', '0', '0', '0'},
-				{'0', '0', 'E', '0', '0', '0', '0'},
-				{'0', '0', '0', '0', '0', '0', '0'},
-				{'0', '0', '0', '0', '0', '0', '0'},
-				{'0', '0', '0', '0', '0', '0', '0'},
-				};
-		char letters[] = {'A', 'T', 'I', 'R', 'N', 'E', 'P'};
-		disp.printLetter(letters);
-		disp.printtab(tab);
-		disp.printbutton();
-		disp.initChat();
-		
-		char tabCorrect[][] = {{'0', '0', 'T', '0', '0', '0', '0'},
-				{'0', '0', 'I', '0', '0', '0', '0'},
-				{'0', '0', 'M', '0', '0', '0', '0'},
-				{'0', '0', 'E', '0', '0', '0', '0'},
-				{'0', '0', 'S', '0', '0', '0', '0'},
-				{'0', '0', '0', '0', '0', '0', '0'},
-				{'0', '0', '0', '0', '0', '0', '0'},
-				};
-		char letterCorrect[] = {'A', 'T', 'I', 'R', 'M', 'E', 'P'};
-		disp.refresh(tabCorrect, letterCorrect);
 	}
 }

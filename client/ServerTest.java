@@ -46,7 +46,6 @@ public class ServerTest {
 				
 				//tirage
 				char letters[] = {'A', 'T', 'I', 'R', 'M', 'E', 'P'};
-				message = "/.";
 				message = "";
 				for(int i = 0; i < letters.length; i++) {
 					message += letters[i] + ",";
@@ -66,7 +65,7 @@ public class ServerTest {
 				CONNECTE/user/
 				(S -> C) Signalement de la connexion de ’user’ aux autres clients.
                  */
-				message = "CONNECTE/.";
+				message = "CONNECTE";
 				output.write(message.getBytes());
 				message = "MARCO";
 				output.write(message.getBytes());
